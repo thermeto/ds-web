@@ -1,0 +1,119 @@
+.main-container {
+    width: 100%;
+    background-color: #edfafd;
+}
+
+.image-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-overlay-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3.6;
+    object-fit: cover;
+}
+
+
+.overlay-text {
+    position: absolute;
+    max-width: 60%; /* adjust as needed */
+    padding: 10% 5%; /* adjust as needed */
+    text-align: center;
+    font-size: 80px;
+    font-family: 'Indie Flower', cursive;
+    transform: translate(30%, -20%); /* adjust these values to move your text */
+    /* Other styles for text overlay, such as color, padding, etc. */
+}
+
+.overlay-sign {
+    position: absolute;
+    max-width: 60%; /* adjust as needed */
+    padding: 10% 5%; /* adjust as needed */
+    transform: translate(20%, 10%); /* adjust these values to move your text */
+    /* Other styles for text overlay, such as color, padding, etc. */
+}
+
+.ship-sign {
+    /* Adjust as needed */
+    top: 10%; 
+    left: 20%;
+    transform: rotate(-10deg);
+    width: 500px;
+    height: auto;
+}
+
+.drive-sign {
+    /* Adjust as needed */
+    top: 10%; 
+    left: 70%;
+    transform: rotate(10deg);
+    width: 500px;
+    height: auto;
+}
+
+.presentation-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; /* adjust as needed */
+    padding: 20px; /* adjust as needed */
+    justify-items: center; /* added this line */
+    align-items: start; /* added this line */
+}
+
+.presentation-point {
+    padding: 0 50px; /* adjust as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.point-title {
+    text-align: start;
+    font-size: 22px;
+    color: rgb(0, 26, 71);
+}
+
+.point-descr {
+    text-align: start;
+    font-size: 18px;
+    padding-left: 1em; /* adjust as needed */
+    color: rgb(0, 26, 71);
+    opacity: 0.8;
+}
+
+.point-header {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* adjust as needed */
+}
+
+.point-icon {
+    width: 30px; /* adjust as needed */
+    height: 30px; /* adjust as needed */
+}
+
+@keyframes flash {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+.flash {
+    color: yellowgreen;
+    animation: flash 1s linear;
+}
+
+.appeared {
+    color: yellowgreen;
+}
