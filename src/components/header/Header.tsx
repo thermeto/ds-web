@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Header.css';
 import logo from '../resources/dropstick_logo.png';
 import google from '../resources/google.png';
@@ -31,7 +32,9 @@ const Header: React.FC = () => {
     return (
         <header className="header">
             <div className="logo">
-                <img src={logo} alt="Icon description" className="header-logo" />
+                <Link to="/">
+                    <img src={logo} alt="Icon description" className="header-logo" />
+                </Link>
             </div>
             <div className="options">
                 <div>
@@ -45,8 +48,8 @@ const Header: React.FC = () => {
                 </div>
                 {showLoginForm && (
                     <div className="login-form">
-                        <form onSubmit={handleLogin}>
-                            <div className="input-row">
+                        <form onSubmit={handleLogin} className='form'>
+                            <div className="header-input-row">
                                 <input
                                     type="email"
                                     value={email}
@@ -55,7 +58,7 @@ const Header: React.FC = () => {
                                     required
                                 />
                             </div>
-                            <div className="input-row">
+                            <div className="header-input-row">
                                 <input
                                     type="password"
                                     value={password}
@@ -65,15 +68,15 @@ const Header: React.FC = () => {
                                 />
                                 <a href="/forgot-password" className="forgot-password-link">Forgot password?</a>
                             </div>
-                            <div className="input-row">
+                            <div className="header-button-row">
                                 <button type="submit" className='login-form-button'>Log in</button>
                             </div>
                             <div className="signup-row">
                                 <h3 className='info-text'>
-                                    New to DropStick? <a href="/signup" className="signup-link">Sign Up</a>
+                                    New to DropStick? <Link to="/signup" className="signup-link">Sign Up</Link>
                                 </h3>
                             </div>
-                            <hr className="divider" />
+                            <hr className="login-divider" />
                             <div className='social-row'>
                                 <button className="social-button" onClick={() => handleSocialLogin("google")}>
                                     <img src={google} alt="Google sign-in" />

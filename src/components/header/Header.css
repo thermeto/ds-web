@@ -61,20 +61,36 @@
     font-size: 18px;
 }
 
-.input-row {
+.header-input-row {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    justify-content: center;
+    font-size: 18px;
+    align-items: center;
+}
+
+.signup-row {
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    align-items: center;
+}
+
+.header-button-row {
+    display: flex;
+    flex-direction: column;
     font-size: 18px;
     align-items: center;
 }
 
 .forgot-password-link {
     margin-top: 5px;
+    margin-bottom: 5px;
     text-decoration: none;
     color: blue;
     font-family: 'Indie Flower', cursive; 
     font-weight: bold;
+    font-size: 18px;
 }
 
 .signup-link {
@@ -109,4 +125,8 @@
     border: none;
     padding: 0;
     margin: 0;
+}
+
+.login-divider {
+    margin-bottom: 5px;
 }

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './SignUp.css';
 import logo from '../resources/dropstick_logo.png';
+import google from '../resources/google.png';
+import facebook from '../resources/facebook.png';
 
 const SignUp: React.FC = () => {
     const [name, setName] = useState("");
@@ -27,19 +30,35 @@ const SignUp: React.FC = () => {
         setPasswordMatch(password === event.target.value);
     };
 
+    const handleSocialLogin = (platform: string) => {
+        // Handle social login logic here...
+        switch (platform) {
+            case 'google':
+                console.log('Google login initiated');
+                break;
+            case 'facebook':
+                console.log('Facebook login initiated');
+                break;
+            default:
+                console.log('Invalid platform');
+        }
+    }
+
     return (
         <>
             <header className="header">
                 <div className="logo">
+                <Link to="/">
                     <img src={logo} alt="Icon description" className="header-logo" />
+                    </Link>
                 </div>
             </header>
             <div className='signup-block'>
                 <div className='signup-box'>
                     <div className='signup-form'>
-                        <div className='question-item'>
-                            <label className="question-label">Name:</label>
-                            <div className="input-container">
+                        <div className='signup-question-item'>
+                            <label className="signup-question-label">Name:</label>
+                            <div className="signup-input-container">
                                 <input
                                     type="text"
                                     placeholder="Name"
@@ -50,9 +69,9 @@ const SignUp: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <div className='question-item'>
-                            <label className="question-label">Email:</label>
-                            <div className="input-container">
+                        <div className='signup-question-item'>
+                            <label className="signup-question-label">Email:</label>
+                            <div className="signup-input-container">
                                 <input
                                     type="email"
                                     placeholder="Email"
@@ -64,9 +83,9 @@ const SignUp: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <div className='question-item'>
-                            <label className="question-label">Password:</label>
-                            <div className="input-container">
+                        <div className='signup-question-item'>
+                            <label className="signup-question-label">Password:</label>
+                            <div className="signup-input-container">
                                 <input
                                     type="password"
                                     placeholder="Password"
@@ -77,9 +96,9 @@ const SignUp: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <div className='question-item'>
-                            <label className="question-label">Confirm Password:</label>
-                            <div className="input-container">
+                        <div className='signup-question-item'>
+                            <label className="signup-question-label">Confirm Password:</label>
+                            <div className="signup-input-container">
                                 <input
                                     type="password"
                                     placeholder="Confirm Password"
@@ -91,9 +110,9 @@ const SignUp: React.FC = () => {
                             </div>
                             {!passwordMatch && <label className="pwd-warning">Passwords do not match!</label>}
                         </div>
-                        <div className='question-item'>
-                            <label className="question-label">Phone Number:</label>
-                            <div className="input-container">
+                        <div className='signup-question-item'>
+                            <label className="signup-question-label">Phone Number:</label>
+                            <div className="signup-input-container">
                                 <input
                                     type="tel"
                                     placeholder="Phone Number"
@@ -105,11 +124,20 @@ const SignUp: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <div className='question-item'>
-                            <div className="input-container">
+                        <div className='signup-question-item'>
+                            <div className="signup-input-container">
                                 <button type="submit" className="signup-button">Sign Up</button>
                             </div>
                         </div>
+                        <hr className="signup-divider" />
+                            <div className='signup-social-row'>
+                                <button className="signup-social-button" onClick={() => handleSocialLogin("google")}>
+                                    <img src={google} alt="Google sign-in" />
+                                </button>
+                                <button className="signup-social-button" onClick={() => handleSocialLogin("facebook")}>
+                                    <img src={facebook} alt="Facebook sign-in" />
+                                </button>
+                            </div>
                     </div>
                 </div>
             </div>

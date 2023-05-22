@@ -1,5 +1,6 @@
 import React, { FC, useState, useEffect } from "react";
 import "./Main.css";
+import { Link } from 'react-router-dom';
 import Header from '../header/Header';
 import hitchhikerImage from './resources/home_hitchhiker.png';
 import shipSignImage from './resources/ship_sign.png';
@@ -51,7 +52,9 @@ const Main: FC = () => {
                             <h2>Hitchhike stuff !</h2>
                         </div>
                         <div className="overlay-sign">
-                            <img src={shipSignImage} alt="Your description" className="ship-sign" />
+                            <Link to="/create-delivery">
+                                <img src={shipSignImage} alt="Your description" className="ship-sign" />
+                            </Link>
                             <img src={driveSignImage} alt="Your description" className="drive-sign" />
                         </div>
                     </div>

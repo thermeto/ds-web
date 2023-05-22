@@ -19,7 +19,7 @@
     align-items: center;
     border: 1px solid #ccc; 
     width: 30%;
-    height: 50%;
+    height: 60%;
     border-radius: 10px; 
     padding: 20px; 
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15); 
@@ -42,19 +42,21 @@
     margin-bottom: 10px;
 }
 
-.question-label {
+.signup-question-label {
     display: block;
     text-align: left;
     margin-bottom: 5px;
+    font-size: 22px;
+    font-family: 'Indie Flower', cursive; 
 }
 
-.question-item {
+.signup-question-item {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-.input-container {
+.signup-input-container {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -74,4 +76,26 @@
     margin-bottom: 10px;
     color: red;
     font-size: 14px;
+}
+
+.signup-divider {
+    margin-bottom: 5px;
+}
+
+.signup-social-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;  
+    justify-content: center;
+}
+
+.signup-social-button, .signup-social-button img {
+    width: 50px;
+    height: auto;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 10px;
 }
