@@ -63,24 +63,24 @@ const Main: FC = () => {
                     <div className="presentation-point">
                         <div className="point-header">
                             <img src={shipmentIcon} alt="Icon description" className="point-icon" />
-                            <h2 className="point-title">Post your <span className={isChanging ? 'flash' : 'appeared'}>{currentText}</span> shipment order</h2>
+                            <h2 className="point-title">Dispatch your <span className={isChanging ? 'flash' : 'appeared'}>{currentText}</span> shipment order</h2>
                         </div>
-                        <p className="point-descr">Drivers heading in the same direction will pick it up and deliver it directly to the recipient. Same day. No round-trip price overhead.</p>
+                        <p className="point-descr">Travel-savvy drivers en-route to your destination will take up the task of delivering it directly to the recipient - all within the same day. Enjoy the cost-effectiveness with no charges for round-trip overheads.</p>
                     </div>
                     <div className="presentation-point">
                         <div className="point-header">
                             <img src={routeIcon} alt="Icon description" className="point-icon" />
-                            <h2 className="point-title">Post your driving route</h2>
+                            <h2 className="point-title">Share your planned journey with us</h2>
                         </div>
-                        <p className="point-descr">We will suggest stuff that you can easily pick up and drop on your way. With minimal distance and time extension to existing trip.</p>
+                        <p className="point-descr">We will recommend items you can conveniently pick up and deliver on your way. Experience an effortless extension to your existing trip with minimal additions to distance and time.</p>
                     </div>
                     <div className="presentation-point">
                         <div className="point-header">
                             <img src={calmIcon} alt="Icon description" className="point-icon" />
                             <h2 className="point-title">Enjoy peace of mind</h2>
                         </div>
-                        <p className="point-descr">As a sender, track your shipment progress, communicate with driver at any moment.</p>
-                        <p className="point-descr">As a driver, we guarantee package transparency and safety.</p>
+                        <p className="point-descr">As a sender, keep track of your shipment in real-time and maintain open communication with the driver.</p>
+                        <p className="point-descr">For our drivers, we assure complete transparency and safety of packages - because your peace of mind is our top priority.</p>
                     </div>
                 </div>
             </div>

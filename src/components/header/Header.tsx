@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useUserContext } from '../../contexts/UserContext';
 import './Header.css';
 import logo from '../resources/dropstick_logo.png';
 import google from '../resources/google.png';
 import facebook from '../resources/facebook.png';
+import { signInWithGoogle } from '../../auth/firebase';
+
+
 
 const Header: React.FC = () => {
+    const { user } = useUserContext();
     const [showLoginForm, setShowLoginForm] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -20,6 +25,13 @@ const Header: React.FC = () => {
         switch (platform) {
             case 'google':
                 console.log('Google login initiated');
+                signInWithGoogle().then((result) => {
+                    console.log(result.user)
+                    // Handle the result here, it will contain the user information.
+                }).catch((error) => {
+                    // Handle errors here.
+                    console.error(error);
+                });
                 break;
             case 'facebook':
                 console.log('Facebook login initiated');
@@ -38,12 +50,24 @@ const Header: React.FC = () => {
             </div>
             <div className="options">
                 <div>
-                    <button
-                        className={`login-button ${showLoginForm ? 'active' : ''}`}
-                        onClick={() => setShowLoginForm(!showLoginForm)}
-                    >
-                        Log in
-                    </button>
+                    {user ? (
+                        <button
+                            className={`login-button`}
+                            // onClick={() => /* redirect to profile page logic here */}
+                        >
+                            Profile
+                        </button>
+                    ) : (
+                        <>
+                            <button
+                                className={`login-button ${showLoginForm ? 'active' : ''}`}
+                                onClick={() => setShowLoginForm(!showLoginForm)}
+                            >
+                                Log in
+                            </button>
+                            <button className="get-started-button">Get started</button>
+                        </>
+                    )}
                     <button className="get-started-button">Get started</button>
                 </div>
                 {showLoginForm && (
