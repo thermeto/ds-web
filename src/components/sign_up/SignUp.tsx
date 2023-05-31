@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { getAuth, signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from "firebase/auth";
 import './SignUp.css';
+import { auth, signUpWithEmail } from '../../auth/firebase';
 import logo from '../resources/dropstick_logo.png';
 import google from '../resources/google.png';
 import facebook from '../resources/facebook.png';
@@ -12,6 +14,31 @@ const SignUp: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("+380");
     const [passwordMatch, setPasswordMatch] = useState(true);
+    const [pwdValid, setPwdValid] = useState(true);
+    const [emailExists, setEmailExists] = useState(false);
+    const [verificationCode, setVerificationCode] = useState("");
+    const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
+    const recaptchaContainerId = "recaptcha-container";
+
+
+    const handleSignUp = async (event: React.FormEvent) => {
+        event.preventDefault();
+        setEmailExists(false);
+        try {
+            if (password === confirmPassword) {
+                const userCredential = await signUpWithEmail(email, password);
+                const user = userCredential.user;
+                console.log('User signed up: ', user);
+            } else {
+                alert('Passwords do not match!');
+            }
+        } catch (error : any) {
+            console.error('Error signing up with email and password', error);
+            if (error.code === "auth/email-already-in-use") {
+                setEmailExists(true);
+            }
+        }
+    };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
@@ -21,14 +48,48 @@ const SignUp: React.FC = () => {
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(event.target.value);
-        setPasswordMatch(event.target.value === confirmPassword);
+        const newPwd = event.target.value;
+        setPassword(newPwd);
+        setPwdValid(newPwd.length >= 6);
+        setPasswordMatch(newPwd === confirmPassword);
     };
 
     const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(event.target.value);
         setPasswordMatch(password === event.target.value);
     };
+
+    useEffect(() => {
+        const recaptchaVerifier = new RecaptchaVerifier(recaptchaContainerId, {}, getAuth());
+
+        return () => {
+            recaptchaVerifier.clear();
+        };
+    }, []);
+
+    const handlePhoneNumberVerification = async () => {
+        try {
+            const confirmResult = await signInWithPhoneNumber(getAuth(), phoneNumber, new RecaptchaVerifier(recaptchaContainerId, {}, getAuth()));
+            setConfirmResult(confirmResult);
+        } catch (error) {
+            console.error("Error verifying phone number", error);
+        }
+    };
+
+    const handleVerificationCodeSubmit = async () => {
+        if (!confirmResult) {
+            console.error("Phone number verification has not been initiated.");
+            return;
+        }
+
+        try {
+            const userCredential = await confirmResult.confirm(verificationCode);
+            console.log("Phone number has been verified.", userCredential);
+        } catch (error) {
+            console.error("Error confirming verification code", error);
+        }
+    };
+
 
     const handleSocialLogin = (platform: string) => {
         // Handle social login logic here...
@@ -48,13 +109,13 @@ const SignUp: React.FC = () => {
         <>
             <header className="header">
                 <div className="logo">
-                <Link to="/">
-                    <img src={logo} alt="Icon description" className="header-logo" />
+                    <Link to="/">
+                        <img src={logo} alt="Icon description" className="header-logo" />
                     </Link>
                 </div>
             </header>
             <div className='signup-block'>
-                <div className='signup-box'>
+                <form onSubmit={handleSignUp} className='signup-box'>
                     <div className='signup-form'>
                         <div className='signup-question-item'>
                             <label className="signup-question-label">Name:</label>
@@ -78,11 +139,15 @@ const SignUp: React.FC = () => {
                                     className="user-input"
                                     pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                     value={email}
-                                    onChange={e => setEmail(e.target.value)}
+                                    onChange={e => {
+                                        setEmail(e.target.value);
+                                        setEmailExists(false);
+                                    }}
                                     required
                                 />
                             </div>
                         </div>
+                        {emailExists && <label className="pwd-warning">User with this email already registered!</label>}
                         <div className='signup-question-item'>
                             <label className="signup-question-label">Password:</label>
                             <div className="signup-input-container">
@@ -91,11 +156,15 @@ const SignUp: React.FC = () => {
                                     placeholder="Password"
                                     className="user-input"
                                     value={password}
-                                    onChange={handlePasswordChange}
+                                    onChange={e => {
+                                        handlePasswordChange(e);
+                                        setPasswordMatch(e.target.value === confirmPassword);
+                                    }}
                                     required
                                 />
                             </div>
                         </div>
+                        {!pwdValid && <label className="pwd-warning">Password must be at least 6 characters long!</label>}
                         <div className='signup-question-item'>
                             <label className="signup-question-label">Confirm Password:</label>
                             <div className="signup-input-container">
@@ -122,25 +191,42 @@ const SignUp: React.FC = () => {
                                     pattern="\+380\d{9}" // phone number pattern validation
                                     required
                                 />
+                                <button type="button" onClick={handlePhoneNumberVerification}>Verify</button>
                             </div>
                         </div>
+                        {confirmResult && (
+                            <div className='signup-question-item'>
+                                <label className="signup-question-label">Verification Code:</label>
+                                <div className="signup-input-container">
+                                    <input
+                                        type="text"
+                                        placeholder="Verification Code"
+                                        className="user-input"
+                                        value={verificationCode}
+                                        onChange={(e) => setVerificationCode(e.target.value)}
+                                    />
+                                    <button type="button" onClick={handleVerificationCodeSubmit}>Submit Verification Code</button>
+                                </div>
+                            </div>
+                        )}
                         <div className='signup-question-item'>
                             <div className="signup-input-container">
                                 <button type="submit" className="signup-button">Sign Up</button>
                             </div>
                         </div>
                         <hr className="signup-divider" />
-                            <div className='signup-social-row'>
-                                <button className="signup-social-button" onClick={() => handleSocialLogin("google")}>
-                                    <img src={google} alt="Google sign-in" />
-                                </button>
-                                <button className="signup-social-button" onClick={() => handleSocialLogin("facebook")}>
-                                    <img src={facebook} alt="Facebook sign-in" />
-                                </button>
-                            </div>
+                        <div className='signup-social-row'>
+                            <button className="signup-social-button" onClick={() => handleSocialLogin("google")}>
+                                <img src={google} alt="Google sign-in" />
+                            </button>
+                            <button className="signup-social-button" onClick={() => handleSocialLogin("facebook")}>
+                                <img src={facebook} alt="Facebook sign-in" />
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
+            <div id={recaptchaContainerId}></div>
         </>
     );
 };

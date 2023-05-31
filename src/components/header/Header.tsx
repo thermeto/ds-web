@@ -65,7 +65,6 @@ const Header: React.FC = () => {
                             >
                                 Log in
                             </button>
-                            <button className="get-started-button">Get started</button>
                         </>
                     )}
                     <button className="get-started-button">Get started</button>
