@@ -107,3 +107,11 @@
     padding: 0;
     margin-bottom: 10px;
 }
+
+.captcha-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999; /* to make sure it's on top of other elements */
+}

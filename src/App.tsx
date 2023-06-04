@@ -5,6 +5,7 @@ import './App.css';
 import CreateDelievery from './components/create_delievery/CreateDelievery';
 import Main from './components/main/Main';
 import SignUp from './components/sign_up/SignUp';
+import Profile from './components/profile/Profile';
 import { auth } from './auth/firebase';
 import { User } from 'firebase/auth';
 
@@ -29,6 +30,7 @@ const App: FC = () => {
           <Route path="/" element={<Main />} />
           <Route path="/create-delivery" element={<CreateDelievery />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     </UserContext.Provider>

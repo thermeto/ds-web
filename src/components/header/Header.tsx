@@ -51,12 +51,11 @@ const Header: React.FC = () => {
             <div className="options">
                 <div>
                     {user ? (
-                        <button
-                            className={`login-button`}
-                            // onClick={() => /* redirect to profile page logic here */}
-                        >
-                            Profile
-                        </button>
+                        <Link to="/profile">
+                            <button className="login-button">
+                                Profile
+                            </button>
+                        </Link>
                     ) : (
                         <>
                             <button

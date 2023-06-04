@@ -7,6 +7,12 @@ import logo from '../resources/dropstick_logo.png';
 import google from '../resources/google.png';
 import facebook from '../resources/facebook.png';
 
+declare global {
+    interface Window {
+        recaptchaWidgetId: any;
+    }
+}
+
 const SignUp: React.FC = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -17,8 +23,11 @@ const SignUp: React.FC = () => {
     const [pwdValid, setPwdValid] = useState(true);
     const [emailExists, setEmailExists] = useState(false);
     const [verificationCode, setVerificationCode] = useState("");
-    const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
+
+    const recaptchaContainerRef = useRef<HTMLDivElement | null>(null);
     const recaptchaContainerId = "recaptcha-container";
+    const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
+    const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
 
 
     const handleSignUp = async (event: React.FormEvent) => {
@@ -32,7 +41,7 @@ const SignUp: React.FC = () => {
             } else {
                 alert('Passwords do not match!');
             }
-        } catch (error : any) {
+        } catch (error: any) {
             console.error('Error signing up with email and password', error);
             if (error.code === "auth/email-already-in-use") {
                 setEmailExists(true);
@@ -59,18 +68,23 @@ const SignUp: React.FC = () => {
         setPasswordMatch(password === event.target.value);
     };
 
-    useEffect(() => {
-        const recaptchaVerifier = new RecaptchaVerifier(recaptchaContainerId, {}, getAuth());
 
-        return () => {
-            recaptchaVerifier.clear();
-        };
-    }, []);
 
     const handlePhoneNumberVerification = async () => {
         try {
-            const confirmResult = await signInWithPhoneNumber(getAuth(), phoneNumber, new RecaptchaVerifier(recaptchaContainerId, {}, getAuth()));
-            setConfirmResult(confirmResult);
+            if (recaptchaContainerRef.current) {
+                const recaptchaVerifierInstance = new RecaptchaVerifier(recaptchaContainerId, {}, getAuth());
+                setRecaptchaVerifier(recaptchaVerifierInstance);
+                recaptchaVerifierInstance.render().then(function (widgetId) {
+                    window.recaptchaWidgetId = widgetId;
+                });
+
+                const result = await signInWithPhoneNumber(getAuth(), phoneNumber, recaptchaVerifierInstance);
+                setConfirmResult(result);
+
+                recaptchaVerifierInstance.clear();
+                setRecaptchaVerifier(null);
+            }
         } catch (error) {
             console.error("Error verifying phone number", error);
         }
@@ -205,7 +219,7 @@ const SignUp: React.FC = () => {
                                         value={verificationCode}
                                         onChange={(e) => setVerificationCode(e.target.value)}
                                     />
-                                    <button type="button" onClick={handleVerificationCodeSubmit}>Submit Verification Code</button>
+                                    <button type="button" onClick={handleVerificationCodeSubmit}>Submit</button>
                                 </div>
                             </div>
                         )}
@@ -224,9 +238,9 @@ const SignUp: React.FC = () => {
                             </button>
                         </div>
                     </div>
+                    <div id={recaptchaContainerId} ref={recaptchaContainerRef} className="captcha-container"></div>
                 </form>
             </div>
-            <div id={recaptchaContainerId}></div>
         </>
     );
 };
