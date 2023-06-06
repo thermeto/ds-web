@@ -32,19 +32,26 @@ const SignUp: React.FC = () => {
 
     const handleSignUp = async (event: React.FormEvent) => {
         event.preventDefault();
-        setEmailExists(false);
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
         try {
-            if (password === confirmPassword) {
-                const userCredential = await signUpWithEmail(email, password);
-                const user = userCredential.user;
-                console.log('User signed up: ', user);
-            } else {
-                alert('Passwords do not match!');
-            }
+            const userCredential = await signUpWithEmail(email, password);
+            const user = userCredential.user;
+            console.log('User signed up: ', user);
         } catch (error: any) {
-            console.error('Error signing up with email and password', error);
-            if (error.code === "auth/email-already-in-use") {
-                setEmailExists(true);
+            const errorCode = error.code;
+            const errorMessage = error.message;
+
+            if (errorCode === 'auth/weak-password') {
+                alert('The password is too weak.');
+            } else if (errorCode === 'auth/email-already-in-use') {
+                alert('The email address is already in use by another account.');
+            } else {
+                alert(errorMessage);
             }
         }
     };
@@ -68,8 +75,6 @@ const SignUp: React.FC = () => {
         setPasswordMatch(password === event.target.value);
     };
 
-
-
     const handlePhoneNumberVerification = async () => {
         try {
             if (recaptchaContainerRef.current) {
@@ -82,8 +87,9 @@ const SignUp: React.FC = () => {
                 const result = await signInWithPhoneNumber(getAuth(), phoneNumber, recaptchaVerifierInstance);
                 setConfirmResult(result);
 
-                recaptchaVerifierInstance.clear();
-                setRecaptchaVerifier(null);
+                if (recaptchaContainerRef.current) {
+                    recaptchaContainerRef.current.style.display = 'none';
+                }
             }
         } catch (error) {
             console.error("Error verifying phone number", error);
