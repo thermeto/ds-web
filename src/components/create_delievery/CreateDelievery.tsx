@@ -7,6 +7,8 @@ import "./CreateDelievery.css";
 import WhatBlock from "./WhatBlock";
 import WhereBlock from "./WhereBlock";
 import WhenBlock from "./WhenBlock";
+import ReceiverInfoBlock from "./ReceiverInfoBlock"
+import SenderInfoBlock from "./SenderInfoBlock"
 import Header from '../header/Header';
 
 const initialFeatures = [
@@ -122,6 +124,14 @@ const CreateDelievery: FC = () => {
             <hr className="divider" />
             <div className="when-block-wrapper">
               <WhenBlock duration={duration} />
+            </div>
+            <hr className="divider" />
+            <div className="when-block-wrapper">
+              <ReceiverInfoBlock/>
+            </div>
+            <hr className="divider" />
+            <div className="when-block-wrapper">
+              <SenderInfoBlock/>
             </div>
             <button type="submit">Submit</button>
           </div>

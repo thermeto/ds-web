@@ -5,7 +5,8 @@ import './Header.css';
 import logo from '../resources/dropstick_logo.png';
 import google from '../resources/google.png';
 import facebook from '../resources/facebook.png';
-import { signInWithGoogle } from '../../auth/firebase';
+import { signInWithGoogle, loginWithEmail } from '../../auth/firebase';
+import { UserCredential } from "firebase/auth";
 
 
 
@@ -17,7 +18,18 @@ const Header: React.FC = () => {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle login logic here...
+        loginWithEmail(email, password)
+            .then((userCredential: UserCredential) => {
+                // Signed in 
+                var user = userCredential.user;
+                console.log(user);
+                setShowLoginForm(false);
+            })
+            .catch((error: any) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.error("Error: ", errorCode, errorMessage);
+            });
     }
 
     const handleSocialLogin = (platform: string) => {
