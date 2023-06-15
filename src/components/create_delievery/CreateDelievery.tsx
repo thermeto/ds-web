@@ -39,6 +39,7 @@ interface Dimensions {
 const GOOGLE_API_KEY: string = process.env.REACT_APP_GOOGLE_MAPS_TOKEN || '';
 
 declare const grecaptcha: any;
+const libraries: ("places" | "drawing" | "geometry" | "localContext" | "visualization")[] = ["places"];
 
 const CreateDelievery: FC = () => {
   const { user } = useUserContext();
@@ -53,7 +54,6 @@ const CreateDelievery: FC = () => {
   const recaptchaContainerRef = useRef<HTMLDivElement | null>(null);
   const recaptchaContainerId = "recaptcha-container";
   const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
-  const [recaptchaVisible, setRecaptchaVisible] = useState(false);
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
   const [recaptchaWidgetId, setRecaptchaWidgetId] = useState<number | null>(null);
 
@@ -64,7 +64,7 @@ const CreateDelievery: FC = () => {
         recaptchaVerifierRef.current.render().then(function (widgetId: number) {
           window.recaptchaWidgetId = widgetId;
           setRecaptchaWidgetId(widgetId);
-        });
+        }).catch((error) => console.error("Error rendering reCAPTCHA", error));        
       }
       if (typeof grecaptcha !== "undefined" && recaptchaWidgetId !== null) {
         grecaptcha.reset(recaptchaWidgetId);
@@ -73,7 +73,7 @@ const CreateDelievery: FC = () => {
       recaptchaContainerRef.current.style.display = 'none';
     }
   };
-
+  
   useEffect(() => {
     if (recaptchaWidgetId !== null && recaptchaContainerRef.current) {
       recaptchaContainerRef.current.style.display = 'block';
@@ -81,17 +81,20 @@ const CreateDelievery: FC = () => {
   }, [recaptchaWidgetId]);
 
 
-  const handleVerify = async (phoneNumber: string) => {
-    try {
-      if (recaptchaVerifierRef.current) {
+  const handleVerify = async (phoneNumber: string): Promise<ConfirmationResult> => {
+    if (recaptchaVerifierRef.current) {
+      try {
         const result = await signInWithPhoneNumber(getAuth(), phoneNumber, recaptchaVerifierRef.current);
-        setConfirmResult(result);
         showRecaptcha(false); // Hide the reCAPTCHA
+        setConfirmResult(result);
+        return result;
+      } catch (error) {
+        console.error("Error verifying phone number", error);
+        showRecaptcha(true); // Show the reCAPTCHA
+        throw error;
       }
-    } catch (error) {
-      console.error("Error verifying phone number", error);
-      showRecaptcha(true); // Show the reCAPTCHA
     }
+    throw new Error("RecaptchaVerifier reference is not set.");
   };
 
 
@@ -151,7 +154,7 @@ const CreateDelievery: FC = () => {
     <>
       <LoadScript
         googleMapsApiKey={GOOGLE_API_KEY}
-        libraries={["places"]}
+        libraries={libraries}
         onLoad={() => console.log("Google Maps API script loaded")}
         onError={(error) => console.error("Error loading Google Maps API script:", error)}
       >
@@ -189,6 +192,7 @@ const CreateDelievery: FC = () => {
               <div className="when-block-wrapper">
                 <SenderInfoBlock onVerify={handleVerify} showRecaptcha={showRecaptcha} />
               </div>
+              <hr className="divider" />
               <button type="submit">Submit</button>
             </div>
             <div className="map-container">
