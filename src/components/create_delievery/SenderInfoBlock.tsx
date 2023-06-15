@@ -1,16 +1,18 @@
+// SenderInfoBlock.tsx
 import React, { useState, FC, ChangeEvent, useEffect, useRef } from "react";
 import "./CreateDelievery.css";
 import { useUserContext } from '../../contexts/UserContext';
-import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult, getAuth } from "firebase/auth";
 
-const SenderInfoBlock: FC = () => {
+interface SenderInfoBlockProps {
+    onVerify: (phoneNumber: string) => void;
+    showRecaptcha: (show: boolean) => void;
+  }
+
+  const SenderInfoBlock: FC<SenderInfoBlockProps> = ({onVerify, showRecaptcha}) => {
     const { user } = useUserContext(); // retrieve the user from your context
 
     const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "+380"); // if user has a phone number, use it as default
     const [isUpdating, setIsUpdating] = useState(false);
-    const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
-    const [isRecaptchaVisible, setIsRecaptchaVisible] = useState(true);
-    const recaptchaContainerRef = useRef<HTMLDivElement | null>(null);
 
     const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
         const val = event.target.value;
@@ -35,18 +37,9 @@ const SenderInfoBlock: FC = () => {
 
     const handleVerifyButtonClick = async () => {
         if (!isPhoneNumberValid()) return;
-    
-        try {
-            const recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, getAuth());
-            const result = await signInWithPhoneNumber(getAuth(), phoneNumber, recaptchaVerifier);
-            setConfirmResult(result);
-            if (recaptchaContainerRef.current) {
-                recaptchaContainerRef.current.style.display = 'none';
-            }
-        } catch (error) {
-            console.error("Error verifying phone number", error);
-        }
-    };
+        showRecaptcha(true);
+        onVerify(phoneNumber); // Pass the updated phoneNumber to the onVerify function
+      };
 
     return (
         <>
@@ -70,9 +63,9 @@ const SenderInfoBlock: FC = () => {
                         : <button onClick={handleUpdateButtonClick}>Update</button>
                         }
                     </div>
+
                 </div>
             </div>
-            <div id="recaptcha-container" ref={recaptchaContainerRef}></div>
         </>
     );
 };
