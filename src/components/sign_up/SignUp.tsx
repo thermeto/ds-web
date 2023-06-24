@@ -23,10 +23,12 @@ const SignUp: React.FC = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("+380");
+    const [verifiedPhoneNumber, setVerifiedPhoneNumber] = useState("");
     const [passwordMatch, setPasswordMatch] = useState(true);
     const [pwdValid, setPwdValid] = useState(true);
     const [emailExists, setEmailExists] = useState(false);
     const [verificationCode, setVerificationCode] = useState("");
+    const [numberIsVerified, setNumberIsVerified] = useState(false);
 
     const recaptchaContainerRef = useRef<HTMLDivElement | null>(null);
     const recaptchaContainerId = "recaptcha-container";
@@ -53,7 +55,7 @@ const SignUp: React.FC = () => {
                 const user: User = {
                     name: name,
                     email: firebaseUser.email ? firebaseUser.email : '',
-                    phoneNumber: phoneNumber
+                    phoneNumber: verifiedPhoneNumber
                 };
     
                 await storeUserOnServer(user, token);
@@ -120,6 +122,9 @@ const SignUp: React.FC = () => {
         try {
             const userCredential = await confirmResult.confirm(verificationCode);
             console.log("Phone number has been verified.", userCredential);
+            setConfirmResult(null);
+            setNumberIsVerified(true)
+            setVerifiedPhoneNumber(phoneNumber)
         } catch (error) {
             console.error("Error confirming verification code", error);
         }
@@ -155,7 +160,7 @@ const SignUp: React.FC = () => {
                     </Link>
                 </div>
             </header>
-            <div className='signup-block'>
+            <div className='signup-window'>
                 <form onSubmit={handleSignUp} className='signup-box'>
                     <div className='signup-form'>
                         <div className='signup-question-item'>
@@ -226,13 +231,13 @@ const SignUp: React.FC = () => {
                                 <input
                                     type="tel"
                                     placeholder="Phone Number"
-                                    className="user-input"
+                                    className={`number-input ${numberIsVerified ? "number-verified" : ""}`}
                                     value={phoneNumber}
                                     onChange={handleInputChange}
                                     pattern="\+380\d{9}" // phone number pattern validation
                                     required
                                 />
-                                <button type="button" onClick={handlePhoneNumberVerification}>Verify</button>
+                                <button type="button" className='verify-number-button' onClick={handlePhoneNumberVerification}>Verify</button>
                             </div>
                         </div>
                         {confirmResult && (

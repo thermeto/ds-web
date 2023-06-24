@@ -27,38 +27,34 @@
 
 .overlay-text {
     position: absolute;
-    max-width: 60%; /* adjust as needed */
-    padding: 10% 5%; /* adjust as needed */
-    text-align: center;
-    font-size: 80px;
+    padding: 10% 5%; 
+    font-size: 5vw;
     font-family: 'Indie Flower', cursive;
-    transform: translate(30%, -20%); /* adjust these values to move your text */
-    /* Other styles for text overlay, such as color, padding, etc. */
+    transform: translate(30%, -20%);
 }
 
 .overlay-sign {
     position: absolute;
-    max-width: 60%; /* adjust as needed */
-    padding: 10% 5%; /* adjust as needed */
-    transform: translate(20%, 10%); /* adjust these values to move your text */
-    /* Other styles for text overlay, such as color, padding, etc. */
+    max-width: 60%; 
+    padding: 10% 5%; 
+    transform: translate(10%, 10%); 
 }
 
 .ship-sign {
-    /* Adjust as needed */
-    top: 10%; 
-    left: 20%;
+    position: absolute;
+    top: 5vh; 
+    left: 20vw;
     transform: rotate(-10deg);
-    width: 500px;
+    width: 25vw;
     height: auto;
 }
 
 .drive-sign {
-    /* Adjust as needed */
-    top: 10%; 
-    left: 70%;
+    position: absolute;
+    top: 5vh; 
+    left: -5vw;
     transform: rotate(10deg);
-    width: 500px;
+    width: 25vw;
     height: auto;
 }
 
