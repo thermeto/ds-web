@@ -12,7 +12,7 @@ import { User } from 'firebase/auth';
 
 const App: FC = () => {
   const [user, setUser] = useState<User | null>(null);
-
+  
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setUser(user);
