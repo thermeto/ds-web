@@ -2,7 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getAuth, signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from "firebase/auth";
 import './SignUp.css';
-import { auth, signUpWithEmail } from '../../auth/firebase';
+import { auth, signUpWithEmail, signInWithGoogle } from '../../auth/firebase';
+import { User } from '../../models/User';
+import { storeUserOnServer } from '../../api/UserApi'
+
+
 import logo from '../resources/dropstick_logo.png';
 import google from '../resources/google.png';
 import facebook from '../resources/facebook.png';
@@ -32,20 +36,32 @@ const SignUp: React.FC = () => {
 
     const handleSignUp = async (event: React.FormEvent) => {
         event.preventDefault();
-
+    
         if (password !== confirmPassword) {
             alert('Passwords do not match!');
             return;
         }
-
+    
         try {
             const userCredential = await signUpWithEmail(email, password);
-            const user = userCredential.user;
-            console.log('User signed up: ', user);
+            const firebaseUser = userCredential.user;
+            console.log('User signed up: ', firebaseUser);
+    
+            if(firebaseUser){
+                const token = await firebaseUser.getIdToken();
+    
+                const user: User = {
+                    name: name,
+                    email: firebaseUser.email ? firebaseUser.email : '',
+                    phoneNumber: phoneNumber
+                };
+    
+                await storeUserOnServer(user, token);
+            }
         } catch (error: any) {
             const errorCode = error.code;
             const errorMessage = error.message;
-
+    
             if (errorCode === 'auth/weak-password') {
                 alert('The password is too weak.');
             } else if (errorCode === 'auth/email-already-in-use') {
@@ -101,7 +117,6 @@ const SignUp: React.FC = () => {
             console.error("Phone number verification has not been initiated.");
             return;
         }
-
         try {
             const userCredential = await confirmResult.confirm(verificationCode);
             console.log("Phone number has been verified.", userCredential);
@@ -116,6 +131,12 @@ const SignUp: React.FC = () => {
         switch (platform) {
             case 'google':
                 console.log('Google login initiated');
+                signInWithGoogle().then((result) => {
+                    console.log(result.user)
+                }).catch((error) => {
+                    // Handle errors here.
+                    console.error(error);
+                });
                 break;
             case 'facebook':
                 console.log('Facebook login initiated');
