@@ -8,7 +8,7 @@
 .delivery-wrapper {
   display: flex;
   flex-grow: 1;
-  flex-direction: row; 
+  flex-direction: row;
 }
 
 .left-container {
@@ -20,10 +20,11 @@
 .menu-container {
   background-color: #edfafd;
   width: 350px;
-  height: 100vh; 
-  overflow-y: auto; 
+  height: 100vh;
+  overflow-y: auto;
   display: flex;
-  justify-content: flex-start; /* aligns items to the start of the container */
+  justify-content: flex-start;
+  /* aligns items to the start of the container */
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
@@ -32,10 +33,13 @@
 }
 
 .divider {
-  width: 50%; /* sets the width to 50% of the parent container */
-  margin: 20px auto; /* adds 20px of space above and below the line */
-  border-top: 3px solid whitesmoke; /* set the color and thickness of the line */
-  border-radius: 30px; 
+  width: 50%;
+  /* sets the width to 50% of the parent container */
+  margin: 20px auto;
+  /* adds 20px of space above and below the line */
+  border-top: 3px solid whitesmoke;
+  /* set the color and thickness of the line */
+  border-radius: 30px;
 }
 
 
@@ -52,7 +56,8 @@
 
 .when-block-wrapper {
   width: 100%;
-  flex: 0 0 auto; /* makes the item not grow or shrink, but stay at auto height */
+  flex: 0 0 auto;
+  /* makes the item not grow or shrink, but stay at auto height */
 }
 
 .map-container {
@@ -60,11 +65,12 @@
 }
 
 .question-label {
-  font-family: 'Indie Flower', cursive; 
+  font-family: 'Indie Flower', cursive;
   font-size: 24px;
   text-align: center;
   padding: 5px;
-  width: 50px; /* adjust this value based on your needs */
+  width: 50px;
+  /* adjust this value based on your needs */
 }
 
 .info-container {
@@ -93,18 +99,18 @@
 }
 
 .dimension-input {
-  padding: 5px; 
-  margin-right: 5px; 
-  border: 1px solid #ccc; 
-  border-radius: 30px; 
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
   width: 60px;
 }
 
-.weight-input{
-  padding: 5px; 
-  margin-right: 5px; 
-  border: 1px solid #ccc; 
-  border-radius: 30px; 
+.weight-input {
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
   width: 80px;
 }
 
@@ -113,7 +119,8 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  pointer-events: none; /* Prevent 'cm' text from blocking user input */
+  pointer-events: none;
+  /* Prevent 'cm' text from blocking user input */
 }
 
 .features-input {
@@ -140,11 +147,12 @@
 
 
 .feature-button:hover {
-  background-color: #45a049; /* Change the button background color on hover */
+  background-color: #45a049;
+  /* Change the button background color on hover */
 }
 
 .feature-button:focus {
-  outline: none; 
+  outline: none;
 }
 
 /* <-- Feature list */
@@ -153,7 +161,8 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
-  justify-content: center; /* Aligns items in the center */
+  justify-content: center;
+  /* Aligns items in the center */
 }
 
 .selected {
@@ -169,14 +178,15 @@
   border-radius: 4px;
   color: white;
   cursor: pointer;
-  font-size: 12px; 
+  font-size: 12px;
 }
+
 /*Feature list --> */
 
 
 /* <-- From-To block */
 
-.fromto-container{
+.fromto-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -187,7 +197,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-  width: 100%; 
+  width: 100%;
 }
 
 .destination-input {
@@ -260,38 +270,53 @@
   border-radius: 30px;
   margin-left: 10px;
 }
+
 /* When block --> */
 
 /* <-------- SenderInfo block */
 
 .verification-code-label {
-  font-family: 'Indie Flower', cursive; 
+  font-family: 'Indie Flower', cursive;
   font-size: 18px;
   text-align: left;
   padding: 5px;
 }
 
 .sender-phone-input {
-  padding: 5px; 
-  margin-right: 5px; 
-  border: 1px solid #ccc; 
-  border-radius: 30px; 
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
   width: 110px;
   margin-left: 10px;
 }
 
-.verification-user-input{
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 30px;
-    margin-left: 10px;
-    width: 100px;
-    margin-bottom: 10px;
-    margin-right: 50px;
+.sender-number-verified {
+  border-color: green;
+  border-width: 2px
 }
 
-.verification-code-container{
+.verification-user-input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  margin-left: 10px;
+  width: 100px;
+  margin-bottom: 10px;
+  margin-right: 50px;
+}
+
+.verification-code-container {
   align-items: center;
   margin-bottom: 15px;
 }
+
+.verify-sender-number-button {
+  border: none;
+  border-radius: 30px;
+  width: 60px;
+  font-size: 16px;
+  height: 28px;
+}
+
 /* SenderInfo block --> */

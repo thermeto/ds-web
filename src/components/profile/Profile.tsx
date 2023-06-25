@@ -1,25 +1,29 @@
+// src/components/profile/Profile.tsx
 import React, { FC, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../auth/firebase';
 import { signOut } from "firebase/auth";
+import { useUserContext } from '../../contexts/UserContext';
 import './Profile.css';
 import Header from '../header/Header';
 
 
 const Profile: FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const { user, setUser } = useUserContext(); 
     const navigate = useNavigate();
 
     const handleSignOut = async () => {
         try {
-            await signOut(auth);
-            console.log("User signed out successfully");
-            navigate('/');
+          await signOut(auth);
+          setUser({ firebaseUser: null, phoneNumber: null });  // set user state to null
+          console.log("User signed out successfully");
+          console.log(user);  
+          navigate('/');
         } catch (error) {
-            console.error("Failed to sign out", error);
+          console.error("Failed to sign out", error);
         }
-    };
-
+      };
     return (
         <>
             <Header />

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getAuth, signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from "firebase/auth";
 import './SignUp.css';
 import { auth, signUpWithEmail, signInWithGoogle } from '../../auth/firebase';
-import { User } from '../../models/User';
+import { DsUser } from '../../models/DsUser';
 import { storeUserOnServer } from '../../api/UserApi'
 
 
@@ -44,23 +44,22 @@ const SignUp: React.FC = () => {
             return;
         }
     
-        try {
-            const userCredential = await signUpWithEmail(email, password);
-            const firebaseUser = userCredential.user;
-            console.log('User signed up: ', firebaseUser);
-    
-            if(firebaseUser){
-                const token = await firebaseUser.getIdToken();
-    
-                const user: User = {
-                    name: name,
-                    email: firebaseUser.email ? firebaseUser.email : '',
-                    phoneNumber: verifiedPhoneNumber
-                };
-    
-                await storeUserOnServer(user, token);
+        signUpWithEmail(email, password).then((userCredential) => {
+            if (userCredential.user) {
+                const user: DsUser = {
+                    email: email,
+                    phoneNumber: verifiedPhoneNumber,
+                    name: name
+                }
+                userCredential.user.getIdToken().then((token) => {
+                    storeUserOnServer(user, token).catch((error) => {
+                        console.error("Failed to store user on server:", error);
+                    });
+                }).catch((error) => {
+                    console.error("Failed to get user token:", error);
+                });
             }
-        } catch (error: any) {
+        }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
     
@@ -71,8 +70,9 @@ const SignUp: React.FC = () => {
             } else {
                 alert(errorMessage);
             }
-        }
-    };
+        })
+    }
+    
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
@@ -136,10 +136,7 @@ const SignUp: React.FC = () => {
         switch (platform) {
             case 'google':
                 console.log('Google login initiated');
-                signInWithGoogle().then((result) => {
-                    console.log(result.user)
-                }).catch((error) => {
-                    // Handle errors here.
+                signInWithGoogle().catch((error) => {
                     console.error(error);
                 });
                 break;
@@ -234,7 +231,7 @@ const SignUp: React.FC = () => {
                                     className={`number-input ${numberIsVerified ? "number-verified" : ""}`}
                                     value={phoneNumber}
                                     onChange={handleInputChange}
-                                    pattern="\+380\d{9}" // phone number pattern validation
+                                    pattern="\+380\d{9}"
                                     required
                                 />
                                 <button type="button" className='verify-number-button' onClick={handlePhoneNumberVerification}>Verify</button>

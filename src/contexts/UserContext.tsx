@@ -1,9 +1,15 @@
+// src/contexts/UserContext.tsx
 import { createContext, useContext } from 'react';
 import { User } from 'firebase/auth';
 
+type CustomUser = {
+  firebaseUser: User | null;
+  phoneNumber: string | null;
+};
+
 type UserContextType = {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  user: CustomUser;
+  setUser: React.Dispatch<React.SetStateAction<CustomUser>>;
 };
 
 // Create context with undefined initial value

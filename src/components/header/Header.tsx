@@ -1,3 +1,4 @@
+//src/components/header/Header.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUserContext } from '../../contexts/UserContext';
@@ -33,14 +34,10 @@ const Header: React.FC = () => {
     }
 
     const handleSocialLogin = (platform: string) => {
-        // Handle social login logic here...
         switch (platform) {
             case 'google':
                 console.log('Google login initiated');
-                signInWithGoogle().then((result) => {
-                    console.log(result.user)
-                    // Handle the result here, it will contain the user information.
-                }).catch((error) => {
+                signInWithGoogle().catch((error) => {
                     // Handle errors here.
                     console.error(error);
                 });
@@ -62,7 +59,7 @@ const Header: React.FC = () => {
             </div>
             <div className="options">
                 <div>
-                    {user ? (
+                    {user.firebaseUser ? (
                         <Link to="/profile">
                             <button className="login-button">
                                 Profile

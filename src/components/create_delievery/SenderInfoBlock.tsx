@@ -1,5 +1,5 @@
-// SenderInfoBlock.tsx
-import React, { useState, FC, ChangeEvent, useEffect, useRef } from "react";
+// src/components/create_delievery/SenderInfoBlock.tsx
+import React, { useState, FC, ChangeEvent, useEffect } from "react";
 import "./CreateDelievery.css";
 import { useUserContext } from '../../contexts/UserContext';
 import { ConfirmationResult } from "firebase/auth";
@@ -11,13 +11,15 @@ interface SenderInfoBlockProps {
 }
 
 const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) => {
-    const { user } = useUserContext(); // retrieve the user from your context
+    const { user } = useUserContext();
 
-    const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "+380"); // if user has a phone number, use it as default
+    const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "+380"); 
+    const [verifiedPhoneNumber, setVerifiedPhoneNumber] = useState(""); 
     const [isUpdating, setIsUpdating] = useState(false);
     const [verificationCode, setVerificationCode] = useState("");
     const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
     const [isVerifying, setIsVerifying] = useState(false);
+    const [numberIsVerified, setNumberIsVerified] = useState(false);
 
     const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
         const val = event.target.value;
@@ -43,7 +45,7 @@ const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) 
     const handleVerifyButtonClick = async () => {
         if (!isPhoneNumberValid()) return;
         showRecaptcha(true);
-        const result = await onVerify(phoneNumber); // Pass the updated phoneNumber to the onVerify function
+        const result = await onVerify(phoneNumber); 
         setConfirmResult(result);
         setIsVerifying(true);
     };
@@ -60,6 +62,8 @@ const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) 
             setIsVerifying(false);
             setConfirmResult(null);
             setVerificationCode("");
+            setNumberIsVerified(true)
+            setVerifiedPhoneNumber(phoneNumber)
         } catch (error) {
             console.error("Error confirming verification code", error);
         }
@@ -75,7 +79,7 @@ const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) 
                     <div className="from-container">
                         <label className="question-label">Phone: </label>
                         <input
-                            className="sender-phone-input"
+                            className={`sender-phone-input ${numberIsVerified ? "sender-number-verified" : ""}`}
                             placeholder="Phone"
                             value={phoneNumber}
                             onChange={handlePhoneNumberChange}
@@ -83,12 +87,12 @@ const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) 
                             readOnly={!isUpdating}
                         />
                         {isUpdating
-                            ? <button onClick={handleVerifyButtonClick}>Verify</button>
-                            : <button onClick={handleUpdateButtonClick}>Update</button>
+                            ? <button className='verify-sender-number-button' onClick={handleVerifyButtonClick}>Verify</button>
+                            : <button className='verify-sender-number-button' onClick={handleUpdateButtonClick}>Update</button>
                         }
                     </div>
-                    {/* {isVerifying && ( */}
-                    { true && (
+                    {/* isVerifying */}
+                    { isVerifying && ( 
                         <>
                             <label className="verification-code-label">Verification Code:</label>
                             <div className="verification-code-container">
@@ -99,7 +103,7 @@ const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) 
                                     value={verificationCode}
                                     onChange={(e) => setVerificationCode(e.target.value)}
                                 />
-                                <button type="button" onClick={handleVerificationCodeSubmit}>Submit</button>
+                                <button className="verify-sender-number-button" type="button" onClick={handleVerificationCodeSubmit}>Submit</button>
                             </div>
                         </>
                     )}
