@@ -9,6 +9,10 @@ import Profile from './components/profile/Profile';
 import { auth } from './auth/firebase';
 import { User } from 'firebase/auth';
 import { getUser } from './api/UserApi';
+import { LoadScript } from "@react-google-maps/api";
+
+const GOOGLE_API_KEY: string = process.env.REACT_APP_GOOGLE_MAPS_TOKEN || '';
+const libraries: ("places" | "drawing" | "geometry" | "localContext" | "visualization")[] = ["places"];
 
 const App: FC = () => {
   const [user, setUser] = useState<{firebaseUser: User | null, phoneNumber: string | null}>({ firebaseUser: null, phoneNumber: null });
@@ -16,7 +20,8 @@ const App: FC = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
-        const userData = await getUser(firebaseUser.uid); // Make sure your getUser function fits this usage
+        const token = await firebaseUser.getIdToken(); 
+        const userData = await getUser(token); 
         setUser({ firebaseUser, phoneNumber: userData ? (userData.phoneNumber ? userData.phoneNumber : null) : null });
       } else {
         setUser({ firebaseUser: null, phoneNumber: null });
@@ -29,16 +34,23 @@ const App: FC = () => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/create-delivery" element={<CreateDelievery />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
-      </Router>
-    </UserContext.Provider>
+    <LoadScript
+        googleMapsApiKey={GOOGLE_API_KEY}
+        libraries={libraries}
+        onLoad={() => console.log("Google Maps API script loaded")}
+        onError={(error) => console.error("Error loading Google Maps API script:", error)}
+    >
+      <UserContext.Provider value={{ user, setUser }}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/create-delivery" element={<CreateDelievery />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </Router>
+      </UserContext.Provider>
+    </LoadScript>
   );
 };
 

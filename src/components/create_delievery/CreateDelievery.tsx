@@ -36,10 +36,7 @@ interface Dimensions {
   height: string;
 }
 
-const GOOGLE_API_KEY: string = process.env.REACT_APP_GOOGLE_MAPS_TOKEN || '';
-
 declare const grecaptcha: any;
-const libraries: ("places" | "drawing" | "geometry" | "localContext" | "visualization")[] = ["places"];
 
 const CreateDelievery: FC = () => {
   const { user } = useUserContext();
@@ -64,7 +61,7 @@ const CreateDelievery: FC = () => {
         recaptchaVerifierRef.current.render().then(function (widgetId: number) {
           window.recaptchaWidgetId = widgetId;
           setRecaptchaWidgetId(widgetId);
-        }).catch((error) => console.error("Error rendering reCAPTCHA", error));        
+        }).catch((error) => console.error("Error rendering reCAPTCHA", error));
       }
       if (typeof grecaptcha !== "undefined" && recaptchaWidgetId !== null) {
         grecaptcha.reset(recaptchaWidgetId);
@@ -73,7 +70,7 @@ const CreateDelievery: FC = () => {
       recaptchaContainerRef.current.style.display = 'none';
     }
   };
-  
+
   useEffect(() => {
     if (recaptchaWidgetId !== null && recaptchaContainerRef.current) {
       recaptchaContainerRef.current.style.display = 'block';
@@ -152,60 +149,53 @@ const CreateDelievery: FC = () => {
 
   return (
     <>
-      <LoadScript
-        googleMapsApiKey={GOOGLE_API_KEY}
-        libraries={libraries}
-        onLoad={() => console.log("Google Maps API script loaded")}
-        onError={(error) => console.error("Error loading Google Maps API script:", error)}
-      >
-        <Header />
-        <div className="delivery-page">
-          <form className="delivery-wrapper" onSubmit={handleSubmit}>
-            <div className="menu-container">
-              <h2>Please provide shipment details:</h2>
-              <div className="what-block-wrapper">
-                <WhatBlock
-                  initialFeatures={initialFeatures}
-                  onDimensionsChange={setDimensions}
-                  onWeightChange={setWeight}
-                  onFeaturesChange={setFeatures}
-                />
-              </div>
-              <hr className="divider" />
-              <div className="where-block-wrapper">
-                <WhereBlock
-                  onOriginSelect={handleOriginSelect}
-                  onDestinationSelect={handleDestinationSelect}
-                  distance={distance}
-                  duration={duration}
-                />
-              </div>
-              <hr className="divider" />
-              <div className="when-block-wrapper">
-                <WhenBlock duration={duration} />
-              </div>
-              <hr className="divider" />
-              <div className="when-block-wrapper">
-                <ReceiverInfoBlock />
-              </div>
-              <hr className="divider" />
-              <div className="when-block-wrapper">
-                <SenderInfoBlock onVerify={handleVerify} showRecaptcha={showRecaptcha} />
-              </div>
-              <hr className="divider" />
-              <button type="submit">Submit</button>
-            </div>
-            <div className="map-container">
-              <Map
-                origin={origin}
-                destination={destination}
-                onDistanceChange={setDistance}
-                onDurationChange={setDuration}
+      <Header />
+      <div className="delivery-page">
+        <form className="delivery-wrapper" onSubmit={handleSubmit}>
+          <div className="menu-container">
+            <h2>Please provide shipment details:</h2>
+            <div className="what-block-wrapper">
+              <WhatBlock
+                initialFeatures={initialFeatures}
+                onDimensionsChange={setDimensions}
+                onWeightChange={setWeight}
+                onFeaturesChange={setFeatures}
               />
             </div>
-          </form>
-        </div>
-      </LoadScript>
+            <hr className="divider" />
+            <div className="where-block-wrapper">
+              <WhereBlock
+                onOriginSelect={handleOriginSelect}
+                onDestinationSelect={handleDestinationSelect}
+                distance={distance}
+                duration={duration}
+              />
+            </div>
+            <hr className="divider" />
+            <div className="when-block-wrapper">
+              <WhenBlock duration={duration} />
+            </div>
+            <hr className="divider" />
+            <div className="when-block-wrapper">
+              <ReceiverInfoBlock />
+            </div>
+            <hr className="divider" />
+            <div className="when-block-wrapper">
+              <SenderInfoBlock onVerify={handleVerify} showRecaptcha={showRecaptcha} />
+            </div>
+            <hr className="divider" />
+            <button type="submit">Submit</button>
+          </div>
+          <div className="map-container">
+            <Map
+              origin={origin}
+              destination={destination}
+              onDistanceChange={setDistance}
+              onDurationChange={setDuration}
+            />
+          </div>
+        </form>
+      </div>
       <div id={recaptchaContainerId} ref={recaptchaContainerRef} className="captcha-container"></div>
     </>
   );
