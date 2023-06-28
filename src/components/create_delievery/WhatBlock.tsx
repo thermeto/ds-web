@@ -1,4 +1,4 @@
-import React, { useState, FC } from "react";
+import React, { useState, FC, useEffect } from "react";
 import "./CreateDelievery.css";
 
 interface Feature {
@@ -11,7 +11,7 @@ interface Props {
     onDimensionsChange: (dimensions: Dimensions) => void;
     onWeightChange: (weight: string) => void;
     onFeaturesChange: (features: Feature[]) => void;
-  }
+}
 
 interface Dimensions {
     width: string;
@@ -19,7 +19,7 @@ interface Dimensions {
     height: string;
 }
 
-const WhatBlock: FC<Props> = ({ initialFeatures }) => {
+const WhatBlock: FC<Props> = ({ initialFeatures, onDimensionsChange, onWeightChange, onFeaturesChange }) => {
     const [dimensions, setDimensions] = useState<Dimensions>({
         width: "",
         length: "",
@@ -29,30 +29,38 @@ const WhatBlock: FC<Props> = ({ initialFeatures }) => {
     const [newFeature, setNewFeature] = useState("#");
     const [features, setFeatures] = useState(initialFeatures);
 
+    const handleNewFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        if (val.substring(0, 1) === "#") {
+            setNewFeature(val);
+        }
+    };
+
     const addFeature = () => {
-        if (newFeature.length > 1) {
-            setFeatures([...features, { text: newFeature, isSelected: true }]);
+        if (newFeature.length > 2) { 
+            const newFeatures = [...features, { text: newFeature, isSelected: true }];
+            setFeatures(newFeatures);
+            onFeaturesChange(newFeatures);
             setNewFeature("#");
         }
     };
+
 
     const toggleFeature = (index: number) => {
         const updatedFeatures = features.map((feature, i) =>
             i === index ? { ...feature, isSelected: !feature.isSelected } : feature
         );
         setFeatures(updatedFeatures);
+        onFeaturesChange(updatedFeatures);
     };
 
-    const handleSetWeight = () => {
-        console.log('Weight:', weight);
-    };
+    useEffect(() => {
+        onDimensionsChange(dimensions);
+    }, [dimensions]);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        // Handle form submission here
-        console.log("Dimensions:", dimensions);
-    };
-
+    useEffect(() => {
+        onWeightChange(weight);
+    }, [weight]);
 
     return (
         <>
@@ -63,7 +71,7 @@ const WhatBlock: FC<Props> = ({ initialFeatures }) => {
                 <div className="input-row">
                     <div className="input-container">
                         <input
-                            type="text"
+                            type="number"
                             placeholder="W"
                             className="dimension-input"
                             value={dimensions.width}
@@ -77,7 +85,7 @@ const WhatBlock: FC<Props> = ({ initialFeatures }) => {
                     <span>x</span>
                     <div className="input-container">
                         <input
-                            type="text"
+                            type="number"
                             placeholder="H"
                             className="dimension-input"
                             value={dimensions.height}
@@ -91,7 +99,7 @@ const WhatBlock: FC<Props> = ({ initialFeatures }) => {
                     <span>x</span>
                     <div className="input-container">
                         <input
-                            type="text"
+                            type="number"
                             placeholder="L"
                             className="dimension-input"
                             value={dimensions.length}
@@ -112,7 +120,7 @@ const WhatBlock: FC<Props> = ({ initialFeatures }) => {
                     <div className="input-container">
                         <input
                             className="weight-input"
-                            type="text"
+                            type="number"
                             value={weight}
                             maxLength={4}
                             pattern="\d{0,4}"
@@ -130,8 +138,7 @@ const WhatBlock: FC<Props> = ({ initialFeatures }) => {
                             className="features-input"
                             type="text"
                             value={newFeature}
-                            onChange={(e) => setNewFeature(e.target.value)}
-                        />
+                            onChange={handleNewFeatureChange} />
                         <button type="button" className="feature-button" onClick={addFeature}>Add</button>
                     </div>
                 </div>

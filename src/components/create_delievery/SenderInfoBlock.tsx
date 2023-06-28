@@ -5,12 +5,14 @@ import { useUserContext } from '../../contexts/UserContext';
 import { ConfirmationResult } from "firebase/auth";
 
 
-interface SenderInfoBlockProps {
+interface Props {
     onVerify: (phoneNumber: string) => Promise<ConfirmationResult>;
     showRecaptcha: (show: boolean) => void;
+    onVerifiedPhoneNumberChange: (phoneNumber: string) => void;  
 }
 
-const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) => {
+
+const SenderInfoBlock: FC<Props> = ({ onVerify, showRecaptcha, onVerifiedPhoneNumberChange}) => {
     const { user } = useUserContext();
 
     const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "+380"); 
@@ -38,6 +40,12 @@ const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) 
         setPhoneNumber(user?.phoneNumber || "+380");
     }, [user]);
 
+    useEffect(() => {
+        if (numberIsVerified) {
+            setPhoneNumber(phoneNumber);
+        }
+    }, [numberIsVerified, phoneNumber]);
+
     const handleUpdateButtonClick = () => {
         setIsUpdating(true);
     };
@@ -64,6 +72,7 @@ const SenderInfoBlock: FC<SenderInfoBlockProps> = ({ onVerify, showRecaptcha }) 
             setVerificationCode("");
             setNumberIsVerified(true)
             setVerifiedPhoneNumber(phoneNumber)
+            onVerifiedPhoneNumberChange(phoneNumber);
         } catch (error) {
             console.error("Error confirming verification code", error);
         }

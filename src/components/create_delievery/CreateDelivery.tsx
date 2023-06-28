@@ -1,5 +1,5 @@
+// src/components/create_delievery/CreateDelivery.tsx
 import React, { FC, useState, useRef, useEffect } from "react";
-import { LoadScript } from "@react-google-maps/api";
 import { useUserContext } from '../../contexts/UserContext';
 import { Navigate } from 'react-router-dom';
 import { RecaptchaVerifier, getAuth, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
@@ -11,6 +11,9 @@ import WhenBlock from "./WhenBlock";
 import ReceiverInfoBlock from "./ReceiverInfoBlock"
 import SenderInfoBlock from "./SenderInfoBlock"
 import Header from '../header/Header';
+import { DeliveryOrderDto } from '../../models/DeliveryOrderDto'; 
+import { postDeliveryOrder } from '../../api/DeliveryApi'; 
+import { getIdToken } from "firebase/auth"; 
 
 declare global {
   interface Window {
@@ -38,7 +41,7 @@ interface Dimensions {
 
 declare const grecaptcha: any;
 
-const CreateDelievery: FC = () => {
+const CreateDelivery: FC = () => {
   const { user } = useUserContext();
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [destination, setDestination] = useState<{ lat: number; lng: number } | null>(null);
@@ -47,6 +50,10 @@ const CreateDelievery: FC = () => {
   const [dimensions, setDimensions] = useState<Dimensions>({ width: "", length: "", height: "" });
   const [weight, setWeight] = useState<string>("");
   const [features, setFeatures] = useState<Feature[]>(initialFeatures);
+  const [senderPhoneNumber, setSenderPhoneNumber] = useState<string>("");
+  const [receiverPhoneNumber, setreceiverPhoneNumber] = useState<string>("");
+  const [receiverName, setReceiverName] = useState<string>("");
+  const [comments, setComments] = useState<string>("");
 
   const recaptchaContainerRef = useRef<HTMLDivElement | null>(null);
   const recaptchaContainerId = "recaptcha-container";
@@ -82,12 +89,12 @@ const CreateDelievery: FC = () => {
     if (recaptchaVerifierRef.current) {
       try {
         const result = await signInWithPhoneNumber(getAuth(), phoneNumber, recaptchaVerifierRef.current);
-        showRecaptcha(false); // Hide the reCAPTCHA
+        showRecaptcha(false);
         setConfirmResult(result);
         return result;
       } catch (error) {
         console.error("Error verifying phone number", error);
-        showRecaptcha(true); // Show the reCAPTCHA
+        showRecaptcha(true);
         throw error;
       }
     }
@@ -107,45 +114,42 @@ const CreateDelievery: FC = () => {
     setDestination(position);
   };
 
-  const handleSubmit = async () => {
-    try {
-      // const response = await fetch('YOUR_BACKEND_ENDPOINT', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      // body: JSON.stringify({
-      //   origin,
-      //   destination,
-      //   distance,
-      //   duration,
-      //   dimensions,
-      //   weight,
-      //   features
-      // })
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error(`HTTP error! status: ${response.status}`);
-      // }
-
-      // const data = await response.json();
-
-      // Handle response data here
-      console.log(JSON.stringify({
-        origin,
-        destination,
-        distance,
-        duration,
-        dimensions,
-        weight,
-        features
-      }));
-
-    } catch (error) {
-      console.log(error);
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+  
+    const deliveryOrder: DeliveryOrderDto = {
+      origin: {
+        lat: origin?.lat || 0,
+        lng: origin?.lng || 0
+      },
+      destination: {
+        lat: destination?.lat || 0,
+        lng: destination?.lng || 0
+      },
+      distance,
+      duration,
+      dimensions,
+      weight,
+      packageFeatures: features.filter((feature) => feature.isSelected).map((feature) => feature.text.substring(1)).join(','),
+      receiverName,
+      receiverPhoneNumber,
+      comments,
+    };
+  
+    if (user?.firebaseUser) {
+      const token = await getIdToken(user.firebaseUser);
+  
+      try {
+        await postDeliveryOrder(deliveryOrder, token);
+        console.log("Delivery order has been sent to the server");
+      } catch (error) {
+        console.error("Error posting order on the server", error);
+      }
+    } else {
+      console.error("No user found");
     }
   };
+  
 
   return (
     <>
@@ -159,7 +163,8 @@ const CreateDelievery: FC = () => {
                 initialFeatures={initialFeatures}
                 onDimensionsChange={setDimensions}
                 onWeightChange={setWeight}
-                onFeaturesChange={setFeatures}
+                onFeaturesChange={newFeature => {setFeatures(newFeature)}
+                }
               />
             </div>
             <hr className="divider" />
@@ -177,11 +182,15 @@ const CreateDelievery: FC = () => {
             </div>
             <hr className="divider" />
             <div className="when-block-wrapper">
-              <ReceiverInfoBlock />
+              <ReceiverInfoBlock
+                onVerifiedPhoneNumberChange={newPhoneNumber => {setreceiverPhoneNumber(newPhoneNumber)}}
+                onNameChange={newName => {setReceiverName(newName)}}
+              />
             </div>
             <hr className="divider" />
             <div className="when-block-wrapper">
-              <SenderInfoBlock onVerify={handleVerify} showRecaptcha={showRecaptcha} />
+              <SenderInfoBlock onVerify={handleVerify} showRecaptcha={showRecaptcha}
+                onVerifiedPhoneNumberChange={newPhoneNumber => {setSenderPhoneNumber(newPhoneNumber)}} />
             </div>
             <hr className="divider" />
             <button type="submit">Submit</button>
@@ -204,4 +213,4 @@ const CreateDelievery: FC = () => {
 
 
 
-export default CreateDelievery;
+export default CreateDelivery;

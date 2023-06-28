@@ -1,14 +1,22 @@
 import React, { useState, FC, ChangeEvent } from "react";
 import "./CreateDelievery.css";
 
-const ReceiverInfoBlock: FC = () => {
+
+interface Props {
+    onNameChange: (name: string) => void;
+    onVerifiedPhoneNumberChange: (phoneNumber: string) => void; 
+}
+
+const ReceiverInfoBlock: FC<Props> = ({onNameChange, onVerifiedPhoneNumberChange}) => {
     const [name, setName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("+380");
     
     const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         const regex = /^[a-zA-Z ]{0,30}$/; // only letters and space
-        if (event.target.value === '' || regex.test(event.target.value)) {
-           setName(event.target.value);
+        const val = event.target.value;
+        if (val === '' || regex.test(val)) {
+           setName(val);
+           onNameChange(val);
         }
     };
 
@@ -16,16 +24,15 @@ const ReceiverInfoBlock: FC = () => {
         const val = event.target.value;
         if(val.substring(0, 4) === "+380") {
             setPhoneNumber(val);
+            onVerifiedPhoneNumberChange(val);
         }
     };
 
     const isNameValid = () => {
-        // check name length (not counting spaces)
         return name.replace(/\s/g,'').length >= 4;
     };
 
     const isPhoneNumberValid = () => {
-        // check phone number length (should be exactly 13 symbols)
         return phoneNumber.length === 13;
     };
 

@@ -123,6 +123,17 @@
   /* Prevent 'cm' text from blocking user input */
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
 .features-input {
   padding: 5px;
   margin-right: 5px;
